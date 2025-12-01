@@ -10,15 +10,33 @@ export default function JobsPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState({
+    state: '',
+    examTrack: '',
+    qualification: ''
+  });
 
   useEffect(() => {
     fetchJobs();
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+        fetchJobs();
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchTerm, filters]);
+
   const fetchJobs = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/jobs`);
+      const params = new URLSearchParams();
+      if (searchTerm) params.append('q', searchTerm);
+      if (filters.state) params.append('state', filters.state);
+      if (filters.examTrack) params.append('track', filters.examTrack);
+      if (filters.qualification) params.append('qualification', filters.qualification);
+
+      const res = await fetch(`${API_URL}/jobs?${params.toString()}`);
       const data = await res.json();
       setJobs(data.data || []);
     } catch (error) {
@@ -28,10 +46,7 @@ export default function JobsPage() {
     }
   };
 
-  const filteredJobs = jobs.filter(job =>
-    job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    job.organization.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredJobs = jobs; // Server side filtering
 
   return (
     <div className="pt-24 px-4 max-w-screen-xl mx-auto">
@@ -44,6 +59,37 @@ export default function JobsPage() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+        <div className="flex flex-wrap gap-4 mt-4">
+           <select
+              className="p-2 border border-gray-300 rounded-lg"
+              value={filters.examTrack}
+              onChange={(e) => setFilters({...filters, examTrack: e.target.value})}
+           >
+              <option value="">All Tracks</option>
+              <option value="SSC">SSC</option>
+              <option value="Banking">Banking</option>
+              <option value="Railways">Railways</option>
+              <option value="State">State</option>
+              <option value="UPSC">UPSC</option>
+           </select>
+           <select
+              className="p-2 border border-gray-300 rounded-lg"
+              value={filters.state}
+              onChange={(e) => setFilters({...filters, state: e.target.value})}
+           >
+              <option value="">All States</option>
+              <option value="Central">Central</option>
+              <option value="Uttar Pradesh">Uttar Pradesh</option>
+              <option value="Delhi">Delhi</option>
+           </select>
+           <input
+              type="text"
+              placeholder="Qualification (e.g. Graduate)"
+              className="p-2 border border-gray-300 rounded-lg"
+              value={filters.qualification}
+              onChange={(e) => setFilters({...filters, qualification: e.target.value})}
+           />
+        </div>
       </div>
 
       {loading ? (

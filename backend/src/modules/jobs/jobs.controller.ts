@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../../app';
+import { CreateJobSchema, UpdateJobSchema } from './jobs.validation';
 
 export const getJobs = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -80,12 +81,17 @@ export const getJobById = async (req: Request, res: Response, next: NextFunction
 export const createJob = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = req.body;
-    // Basic validation could go here or middleware
-    // Serialize JSON fields
-    if (data.importantDates) data.importantDates = JSON.stringify(data.importantDates);
-    if (data.timeline) data.timeline = JSON.stringify(data.timeline);
 
-    const job = await prisma.job.create({ data });
+    const validated = CreateJobSchema.parse(data);
+
+    // Serialize JSON fields
+    const finalData = {
+        ...validated,
+        importantDates: validated.importantDates ? JSON.stringify(validated.importantDates) : undefined,
+        timeline: validated.timeline ? JSON.stringify(validated.timeline) : undefined
+    };
+
+    const job = await prisma.job.create({ data: finalData as any });
     res.status(201).json(job);
   } catch (error) {
     next(error);
@@ -97,12 +103,17 @@ export const updateJob = async (req: Request, res: Response, next: NextFunction)
     const { id } = req.params;
     const data = req.body;
 
-    if (data.importantDates) data.importantDates = JSON.stringify(data.importantDates);
-    if (data.timeline) data.timeline = JSON.stringify(data.timeline);
+    const validated = UpdateJobSchema.parse(data);
+
+    const finalData = {
+        ...validated,
+        importantDates: validated.importantDates ? JSON.stringify(validated.importantDates) : undefined,
+        timeline: validated.timeline ? JSON.stringify(validated.timeline) : undefined
+    };
 
     const job = await prisma.job.update({
       where: { id },
-      data
+      data: finalData as any
     });
     res.json(job);
   } catch (error) {

@@ -16,6 +16,13 @@ export type Job = {
   fees?: string;
   officialPdfUrl?: string;
   applyLink?: string;
+  sourceUrl?: string;
+  summaryShort?: string;
+  whyThisJobMatters?: string;
+  keyHighlights?: string;
+  eligibilityNotes?: string;
+  examPatternNotes?: string;
+  prepTips?: string;
   importantDates: Array<{ title: string; date: string }>;
   timeline: Array<{ stage: string; date: string; status: string }>;
   isArchived: boolean;
