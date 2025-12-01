@@ -1,0 +1,22 @@
+export type Job = {
+  id: string;
+  title: string;
+  organization: string;
+  location?: string;
+  state?: string;
+  examTrack: string;
+  qualification?: string;
+  mode: string;
+  lastDate?: string;
+  tags: string;
+  description?: string;
+  vacancies?: string;
+  eligibility?: string;
+  applicationProcess?: string;
+  fees?: string;
+  officialPdfUrl?: string;
+  applyLink?: string;
+  importantDates: Array<{ title: string; date: string }>;
+  timeline: Array<{ stage: string; date: string; status: string }>;
+  isArchived: boolean;
+};
