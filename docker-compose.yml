@@ -7,6 +7,7 @@ services:
       - "3001:3001"
     environment:
       # For SQLite (Dev):
+<<<<<<< HEAD
       - DATABASE_URL=file:/app/prisma/dev.db
       # For Postgres (Prod/Enterprise):
       # - DATABASE_URL=postgresql://postgres:password@db:5432/careernebula
@@ -17,6 +18,14 @@ services:
     volumes:
       - ./backend/prisma:/app/prisma
       - ./backend/src:/app/src
+=======
+      - DATABASE_URL=file:./dev.db
+      # For Postgres (Prod/Enterprise):
+      # - DATABASE_URL=postgresql://postgres:password@db:5432/careernebula
+      - PORT=3001
+    # depends_on:
+    #   - db
+>>>>>>> main
     networks:
       - careernebula-net
 
