@@ -11,6 +11,7 @@ services:
       # For Postgres (Prod/Enterprise):
       # - DATABASE_URL=postgresql://postgres:password@db:5432/careernebula
       - PORT=3001
+      -  ADMIN_PASSWORD=Sohansh@123
     # depends_on:
     #   - db
     volumes:
